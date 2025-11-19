@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllExpenses, getExpensesByGroupId, saveExpense, removeExpense } from '@/lib/json-storage';
+import { getAllExpenses, getExpensesByGroupId, saveExpense, deleteExpense } from '@/lib/database';
 
 export async function GET(request: Request) {
   try {
@@ -37,7 +37,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Expense ID required' }, { status: 400 });
     }
     
-    removeExpense(id);
+    deleteExpense(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting expense:', error);

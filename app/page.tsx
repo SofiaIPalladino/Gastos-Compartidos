@@ -5,7 +5,6 @@ import { Group } from '@/types';
 import { GroupCard } from '@/components/group-card';
 import { CreateGroupDialog } from '@/components/create-group-dialog';
 import { Wallet } from 'lucide-react';
-import { getGroups, saveGroup, deleteGroup } from '@/lib/client-storage';
 import { AuthGuard } from '@/components/auth-guard';
 import { Navbar } from '@/components/navbar';
 
@@ -14,22 +13,55 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load groups from localStorage
-    const loadedGroups = getGroups();
-    setGroups(loadedGroups);
-    setLoading(false);
+    loadGroups();
   }, []);
 
-  const handleCreateGroup = (group: Group) => {
-    saveGroup(group);
-    setGroups(getGroups());
+  const loadGroups = async () => {
+    try {
+      const response = await fetch('/api/groups');
+      if (response.ok) {
+        const data = await response.json();
+        setGroups(data);
+      }
+    } catch (error) {
+      console.error('Error loading groups:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteGroup = (id: string) => {
+  const handleCreateGroup = async (group: Group) => {
+    try {
+      const response = await fetch('/api/groups', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(group),
+      });
+      
+      if (response.ok) {
+        await loadGroups();
+      }
+    } catch (error) {
+      console.error('Error creating group:', error);
+    }
+  };
+
+  const handleDeleteGroup = async (id: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar este grupo?')) return;
     
-    deleteGroup(id);
-    setGroups(getGroups());
+    try {
+      const response = await fetch(`/api/groups/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        await loadGroups();
+      }
+    } catch (error) {
+      console.error('Error deleting group:', error);
+    }
   };
 
   if (loading) {
@@ -48,18 +80,9 @@ export default function HomePage() {
       <div className="min-h-screen bg-background">
         <Navbar />
         
-        <header className="border-b bg-card">
+        <header>
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-primary text-primary-foreground p-2 rounded-lg">
-                  <Wallet className="h-6 w-6" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-balance">Gastos Compartidos</h1>
-                  <p className="text-sm text-muted-foreground">Gestiona tus gastos en grupo fácilmente</p>
-                </div>
-              </div>
               <CreateGroupDialog onCreateGroup={handleCreateGroup} />
             </div>
           </div>

@@ -1,23 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { authService } from '@/lib/auth'
+import { useAuth } from '@/contexts/AuthContext'
 import { Wallet } from 'lucide-react'
 import Link from 'next/link'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { register, isAuthenticated } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/')
+    }
+  }, [isAuthenticated, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,15 +44,11 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const result = authService.register(email, password, name)
+      const result = await register(email, password, name)
       
       if (result.success) {
-        // Registrar y luego iniciar sesión automáticamente
-        const loginResult = authService.login(email, password)
-        if (loginResult.success) {
-          router.push('/')
-          router.refresh()
-        }
+        router.push('/')
+        router.refresh()
       } else {
         setError(result.error || 'Error al registrarse')
       }

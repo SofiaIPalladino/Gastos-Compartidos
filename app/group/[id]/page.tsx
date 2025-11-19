@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Users, DollarSign } from 'lucide-react';
 import Link from 'next/link';
-import { getGroup, getExpensesByGroup, saveExpense, deleteExpense } from '@/lib/client-storage';
 import { AuthGuard } from '@/components/auth-guard';
 import { Navbar } from '@/components/navbar';
 
@@ -22,25 +21,66 @@ export default function GroupPage({ params }: { params: Promise<{ id: string }> 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load from localStorage
-    const loadedGroup = getGroup(id);
-    const loadedExpenses = getExpensesByGroup(id);
-    
-    setGroup(loadedGroup || null);
-    setExpenses(loadedExpenses);
-    setLoading(false);
+    loadData();
   }, [id]);
 
-  const handleAddExpense = (expense: Expense) => {
-    saveExpense(expense);
-    setExpenses(getExpensesByGroup(id));
+  const loadData = async () => {
+    try {
+      const [groupResponse, expensesResponse] = await Promise.all([
+        fetch(`/api/groups/${id}`),
+        fetch(`/api/expenses?groupId=${id}`),
+      ]);
+
+      if (groupResponse.ok) {
+        const groupData = await groupResponse.json();
+        setGroup(groupData);
+      } else {
+        setGroup(null);
+      }
+
+      if (expensesResponse.ok) {
+        const expensesData = await expensesResponse.json();
+        setExpenses(expensesData);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteExpense = (expenseId: string) => {
+  const handleAddExpense = async (expense: Expense) => {
+    try {
+      const response = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(expense),
+      });
+
+      if (response.ok) {
+        await loadData();
+      }
+    } catch (error) {
+      console.error('Error adding expense:', error);
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar este gasto?')) return;
 
-    deleteExpense(expenseId);
-    setExpenses(getExpensesByGroup(id));
+    try {
+      const response = await fetch(`/api/expenses?id=${expenseId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        await loadData();
+      }
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+    }
   };
 
   if (loading) {

@@ -1,24 +1,16 @@
 'use client'
 
-import { authService } from '@/lib/auth'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Wallet, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 export function Navbar() {
   const router = useRouter()
-  const [userName, setUserName] = useState<string>('')
-
-  useEffect(() => {
-    const user = authService.getCurrentUser()
-    if (user) {
-      setUserName(user.name)
-    }
-  }, [])
+  const { user, logout } = useAuth()
 
   const handleLogout = () => {
-    authService.logout()
+    logout()
     router.push('/login')
     router.refresh()
   }
@@ -34,9 +26,9 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          {userName && (
+          {user && (
             <span className="text-sm text-muted-foreground">
-              Hola, <span className="font-medium text-foreground">{userName}</span>
+              Hola, <span className="font-medium text-foreground">{user.name}</span>
             </span>
           )}
           <Button

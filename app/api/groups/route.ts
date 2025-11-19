@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllGroups, saveGroup } from '@/lib/json-storage';
+import { getAllGroups, saveGroup } from '@/lib/database';
 
 export async function GET() {
   try {
