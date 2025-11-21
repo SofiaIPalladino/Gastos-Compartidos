@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "name": "brasil",
+    "members": [
+      {
+        "id": "942cc186-5630-41e0-aca2-a225824311b7",
+        "name": "gian"
+      },
+      {
+        "id": "d3fcc376-0a16-45aa-8847-40aaa19a0d78",
+        "name": "sofi"
+      }
+    ],
+    "id": "8fcbdb9a-f29c-42ca-ad39-699d92459cd5",
+    "baseCurrency": "ARS",
+    "ownerId": "be3df62f-4733-4158-b64f-e637417abdc2",
+    "createdAt": "2025-11-21T18:23:11.886Z"
+  }
+]

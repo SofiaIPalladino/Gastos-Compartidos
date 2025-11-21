@@ -26,5 +26,12 @@
     "name": "test2",
     "password": "a6aaa967c8b53e6e22603472c946484c9b26440fe71db27d9c88b43bac2947be",
     "createdAt": "2025-11-21T15:36:03.507Z"
+  },
+  {
+    "id": "be3df62f-4733-4158-b64f-e637417abdc2",
+    "email": "a@mail.com",
+    "name": "a a",
+    "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "createdAt": "2025-11-21T18:22:57.246Z"
   }
 ]

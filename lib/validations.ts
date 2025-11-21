@@ -1,5 +1,3 @@
-'use server'
-
 import { z } from 'zod'
 
 const requiredString = (field: string) =>
@@ -36,7 +34,7 @@ export const registerPayloadSchema = z.object({
 
 const amountDigitsValidator = (value: number) => {
   const numeric = value.toString().replace('-', '').replace('.', '').replace(',', '')
-  return numeric.length <= 10
+  return numeric.length <= 6
 }
 
 export const expenseSchema = z.object({
