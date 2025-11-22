@@ -146,9 +146,9 @@ export default function GroupPageClient({ groupId, initialGroup, initialExpenses
                   <span className="text-sm">Total gastado</span>
                 </div>
                 <p className="text-2xl font-bold">
-                  <p className="text-2xl font-bold">
+                  
                   {formatMoney(totalExpenses, group.baseCurrency)}
-                </p>
+                
                 </p>
               </div>
             </div>
