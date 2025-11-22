@@ -131,11 +131,11 @@ export function ExpenseCharts({ expenses, members, baseCurrency }: ExpenseCharts
             <PieChart>
               <Pie
                 data={expensesByCategory}
-                cx="50%"
+                cx="40%" // dejar espacio para la leyenda a la derecha
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent = 0 }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                outerRadius={80}
+                label={false} // No labels sobre el pie
+                outerRadius={90}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -150,6 +150,14 @@ export function ExpenseCharts({ expenses, members, baseCurrency }: ExpenseCharts
                   borderRadius: '8px',
                 }}
                 formatter={(value: number) => formatCurrency(Number(value), baseCurrency)}
+              />
+              <Legend
+                // legend a la derecha, vertical para que no tape el gráfico
+                layout="vertical"
+                verticalAlign="middle"
+                align="right"
+                wrapperStyle={{ right: 0 }}
+                formatter={(value) => value} // muestra el name
               />
             </PieChart>
           </ResponsiveContainer>
